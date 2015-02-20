@@ -14,6 +14,8 @@ public class Bayespam
     {
         int counter_spam    = 0;
         int counter_regular = 0;
+		float Pregular = 0;
+		float Pspam = 0;
 
         // Increase one of the counters by one
         public void incrementCounter(MessageType type)
@@ -33,6 +35,7 @@ public class Bayespam
     // A hash table for the vocabulary (word searching is very fast in a hash table)
     private static Hashtable <String, Multiple_Counter> vocab = new Hashtable <String, Multiple_Counter> ();
 
+	private static float Pregular, Pspam;
 
     // Add a word to the vocabulary
     private static void addWord(String word, MessageType type)
@@ -116,8 +119,11 @@ public class Bayespam
                 // while there are stille words left..
                 while (st.hasMoreTokens())
                 {
+					word = st.nextToken();
+					word = word.replaceAll("[^a-zA-Z]", "").toLowerCase();
                     // add them to the vocabulary
-                    addWord(st.nextToken(), type);
+					if (word.length() >= 4)
+	                    addWord(word, type);
                 }
             }
 
@@ -128,6 +134,7 @@ public class Bayespam
     public static void main(String[] args)
     throws IOException
     {
+		float epsilon = 1;
         // Location of the directory (the path) taken from the cmd line (first arg)
         File dir_location = new File( args[0] );
 
@@ -146,12 +153,48 @@ public class Bayespam
         readMessages(MessageType.SPAM);
 
         // Print out the hash table
-        printVocab();
+        ///printVocab();
 
         // Now all students must continue from here:
         //
         // 1) A priori class probabilities must be computed from the number of regular and spam messages
-        // 2) The vocabulary must be clean: punctuation and digits must be removed, case insensitive
+		/// Count total words
+		int nMessagesRegular, nMessagesSpam, nMessagesTotal, nWordsRegular=0,
+			nWordsSpam=0;
+		
+		nMessagesRegular = listing_regular.length;
+		nMessagesSpam = listing_spam.length;
+		nMessagesTotal = nMessagesRegular + nMessagesSpam;
+
+		Pregular = nMessagesRegular / (float)nMessagesTotal;
+		Pspam = nMessagesSpam / (float)nMessagesTotal;
+
+		System.out.println("P(regular):\t" + Pregular + "\nP(spam):\t" + Pspam);
+		
+		for (String it : vocab.keySet()) {
+			Multiple_Counter word = vocab.get(it);
+			nWordsRegular += word.counter_regular;
+			nWordsSpam    += word.counter_spam;
+		}
+
+		for (String it : vocab.keySet()) {
+			Multiple_Counter word = vocab.get(it);
+			/// Calculate probability of word being in regular
+			if (word.counter_regular > 0) {
+				word.Pregular = word.counter_regular / (float)nWordsRegular;
+			} else {
+				word.Pregular = epsilon / (float)(nWordsRegular + nWordsSpam);
+			}
+			/// Calculate probability of word being in spam
+			if (word.counter_spam > 0) {
+				word.Pspam = word.counter_spam / (float)nWordsSpam;
+			} else {
+				word.Pspam = epsilon / (float)(nWordsRegular + nWordsSpam);
+			}
+		}
+		
+		// 2) The vocabulary must be clean: punctuation and digits must be removed, case insensitive
+		/// See readMessages()
         // 3) Conditional probabilities must be computed for every word
         // 4) A priori probabilities must be computed for every word
         // 5) Zero probabilities must be replaced by a small estimated value
