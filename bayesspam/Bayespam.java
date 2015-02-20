@@ -33,18 +33,22 @@ public class Bayespam
     // A hash table for the vocabulary (word searching is very fast in a hash table)
     private static Hashtable <String, Multiple_Counter> vocab = new Hashtable <String, Multiple_Counter> ();
 
-    
+
     // Add a word to the vocabulary
     private static void addWord(String word, MessageType type)
     {
         Multiple_Counter counter = new Multiple_Counter();
 
-        if ( vocab.containsKey(word) ){                  // if word exists already in the vocabulary..
-            counter = vocab.get(word);                  // get the counter from the hashtable
+        // if word exists already in the vocabulary..
+        if ( vocab.containsKey(word) ){
+            // get the counter from the hashtable
+            counter = vocab.get(word);
         }
-        counter.incrementCounter(type);                 // increase the counter appropriately
+        // increase the counter appropriately
+        counter.incrementCounter(type);
 
-        vocab.put(word, counter);                       // put the word with its counter into the hashtable
+        // put the word with its counter into the hashtable
+        vocab.put(word, counter);
     }
 
 
@@ -65,26 +69,26 @@ public class Bayespam
         listing_spam    = dir_listing[1].listFiles();
     }
 
-    
+
     // Print the current content of the vocabulary
     private static void printVocab()
     {
         Multiple_Counter counter = new Multiple_Counter();
 
         for (Enumeration<String> e = vocab.keys() ; e.hasMoreElements() ;)
-        {   
+        {
             String word;
-            
+
             word = e.nextElement();
             counter  = vocab.get(word);
-            
-            System.out.println( word + " | in regular: " + counter.counter_regular + 
+
+            System.out.println( word + " | in regular: " + counter.counter_regular +
                                 " in spam: "    + counter.counter_spam);
         }
     }
 
 
-    // Read the words from messages and add them to your vocabulary. The boolean type determines whether the messages are regular or not  
+    // Read the words from messages and add them to your vocabulary. The boolean type determines whether the messages are regular or not
     private static void readMessages(MessageType type)
     throws IOException
     {
@@ -95,34 +99,38 @@ public class Bayespam
         } else {
             messages = listing_spam;
         }
-        
+
         for (int i = 0; i < messages.length; ++i)
         {
             FileInputStream i_s = new FileInputStream( messages[i] );
             BufferedReader in = new BufferedReader(new InputStreamReader(i_s));
             String line;
             String word;
-            
-            while ((line = in.readLine()) != null)                      // read a line
+
+            // read a line
+            while ((line = in.readLine()) != null)
             {
-                StringTokenizer st = new StringTokenizer(line);         // parse it into words
-        
-                while (st.hasMoreTokens())                  // while there are stille words left..
+                // parse it into words
+                StringTokenizer st = new StringTokenizer(line);
+
+                // while there are stille words left..
+                while (st.hasMoreTokens())
                 {
-                    addWord(st.nextToken(), type);                  // add them to the vocabulary
+                    // add them to the vocabulary
+                    addWord(st.nextToken(), type);
                 }
             }
 
             in.close();
         }
     }
-   
+
     public static void main(String[] args)
     throws IOException
     {
         // Location of the directory (the path) taken from the cmd line (first arg)
         File dir_location = new File( args[0] );
-        
+
         // Check if the cmd line arg is a directory
         if ( !dir_location.isDirectory() )
         {
@@ -139,7 +147,7 @@ public class Bayespam
 
         // Print out the hash table
         printVocab();
-        
+
         // Now all students must continue from here:
         //
         // 1) A priori class probabilities must be computed from the number of regular and spam messages
