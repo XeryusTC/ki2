@@ -166,8 +166,8 @@ public class Bayespam
 		nMessagesSpam = listing_spam.length;
 		nMessagesTotal = nMessagesRegular + nMessagesSpam;
 
-		Pregular = nMessagesRegular / (float)nMessagesTotal;
-		Pspam = nMessagesSpam / (float)nMessagesTotal;
+		Pregular = Math.log10(nMessagesRegular / (float)nMessagesTotal);
+		Pspam = Math.log10(nMessagesSpam / (float)nMessagesTotal);
 
 		System.out.println("P(regular):\t" + Pregular + "\nP(spam):\t" + Pspam);
 		
@@ -181,15 +181,15 @@ public class Bayespam
 			Multiple_Counter word = vocab.get(it);
 			/// Calculate probability of word being in regular
 			if (word.counter_regular > 0) {
-				word.Pregular = word.counter_regular / (float)nWordsRegular;
+				word.Pregular = Math.log10(word.counter_regular / (float)nWordsRegular);
 			} else {
-				word.Pregular = epsilon / (float)(nWordsRegular + nWordsSpam);
+				word.Pregular = Math.log10(epsilon / (float)(nWordsRegular + nWordsSpam));
 			}
 			/// Calculate probability of word being in spam
 			if (word.counter_spam > 0) {
-				word.Pspam = word.counter_spam / (float)nWordsSpam;
+				word.Pspam = Math.log10(word.counter_spam / (float)nWordsSpam);
 			} else {
-				word.Pspam = epsilon / (float)(nWordsRegular + nWordsSpam);
+				word.Pspam = Math.log10(epsilon / (float)(nWordsRegular + nWordsSpam));
 			}
 		}
 		
