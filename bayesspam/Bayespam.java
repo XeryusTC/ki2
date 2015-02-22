@@ -90,6 +90,21 @@ public class Bayespam
         }
     }
 
+    /// Read a file to a stream of tokens
+    private static String[] readFile(File f) {
+        ArrayList<String> ret = new ArrayList<String>();
+        FileInputStream in = new FileInputStream(f);
+        BufferedReader buf = new BufferedReader(new InputStreamReader(in));
+        String line, word;
+
+        while((line = in.readLine()) != null) {
+            StringTokenizer tok = new StringTokenizer(line);
+            while (tok.hasMoreTokens()) {
+                ret.add(tok.nextToken().replaceAll("[^a-zA-Z]", "").toLowerCase());
+            }
+        }
+        return ret.toArray(new String[ret.size()]);
+    }
 
     // Read the words from messages and add them to your vocabulary. The boolean type determines whether the messages are regular or not
     private static void readMessages(MessageType type)
