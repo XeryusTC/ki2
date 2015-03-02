@@ -59,8 +59,9 @@ public class BigramBayespam {
 
         // Check that there are 2 subdirectories
         if (dir_listing.length != 2) {
-            System.out.println("- Error: specified directory does not contain " +
-                               "two subdirectories.\n");
+            System.out.println(
+                "- Error: specified directory does not contain " +
+                "two subdirectories.\n");
             Runtime.getRuntime().exit(0);
         }
 
@@ -89,18 +90,19 @@ public class BigramBayespam {
         HashSet<String> ret = new HashSet<String>();
         FileInputStream in = new FileInputStream(f);
         BufferedReader buf = new BufferedReader(new InputStreamReader(in));
-        String line, word, prevWord="";
+        String line, word, prevWord = "";
 
         while ((line = buf.readLine()) != null) {
             StringTokenizer tok = new StringTokenizer(line);
             while (tok.hasMoreTokens()) {
-				word = tok.nextToken().replaceAll("[^a-zA-Z]", "").toLowerCase();
-				if (word.length() >= 4) {
-					if (prevWord != "") {
-		                ret.add(prevWord + " " + word);
-					}
-					prevWord = word;
-				}
+                word =
+                    tok.nextToken().replaceAll("[^a-zA-Z]", "").toLowerCase();
+                if (word.length() >= 4) {
+                    if (prevWord != "") {
+                        ret.add(prevWord + " " + word);
+                    }
+                    prevWord = word;
+                }
             }
         }
         return ret.toArray(new String[ret.size()]);
@@ -121,7 +123,7 @@ public class BigramBayespam {
             FileInputStream i_s = new FileInputStream(messages[i]);
             BufferedReader in = new BufferedReader(new InputStreamReader(i_s));
             String line;
-            String word, prevWord="";
+            String word, prevWord = "";
 
             // read a line
             while ((line = in.readLine()) != null) {
@@ -134,11 +136,11 @@ public class BigramBayespam {
                     word = word.replaceAll("[^a-zA-Z]", "").toLowerCase();
                     // add them to the vocabulary
                     if (word.length() >= 4) {
-						if (prevWord != "") {
-	                        addWord(prevWord + " " + word, type);
-						}
-						prevWord = word;
-					}
+                        if (prevWord != "") {
+                            addWord(prevWord + " " + word, type);
+                        }
+                        prevWord = word;
+                    }
                 }
             }
 
@@ -166,18 +168,18 @@ public class BigramBayespam {
         readMessages(MessageType.SPAM);
 
         // Print out the hash table
-        ///printVocab();
+        /// printVocab();
 
-		/// Remove bigrams that occur only a couple of times
-    	Hashtable<String, Multiple_Counter> tmp =
-        	new Hashtable<String, Multiple_Counter>();
-		for (String it : vocab.keySet()) {
-			Multiple_Counter bigram = vocab.get(it);
-			if (bigram.counter_regular + bigram.counter_spam >= 3) {
-				tmp.put(it, bigram);
-			}
-		}
-		vocab = tmp;
+        /// Remove bigrams that occur only a couple of times
+        Hashtable<String, Multiple_Counter> tmp =
+            new Hashtable<String, Multiple_Counter>();
+        for (String it : vocab.keySet()) {
+            Multiple_Counter bigram = vocab.get(it);
+            if (bigram.counter_regular + bigram.counter_spam >= 3) {
+                tmp.put(it, bigram);
+            }
+        }
+        vocab = tmp;
         // Now all students must continue from here:
         //
         // 1) A priori class probabilities must be computed from the number of
@@ -283,6 +285,9 @@ public class BigramBayespam {
         System.out.println("Correct reject rate:\t" + crr);
         System.out.println("False   accept rate:\t" + far);
         System.out.println("False   reject rate:\t" + frr);
+        System.out.println("\n\tPredicted\nActual\tRegular\tSpam\nRegular\t" +
+                           correctRegular + "\t" + falseSpam + "\nSpam\t" +
+                           falseRegular + "\t" + correctSpam + "\n");
         System.out.println("Performance:\t" +
                            (correctRegular + correctSpam) / allMsg * 100);
 
