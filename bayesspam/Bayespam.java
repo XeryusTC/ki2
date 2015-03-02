@@ -1,4 +1,5 @@
 import java.io.*;
+import java.lang.System;
 import java.util.*;
 
 public class Bayespam {
@@ -59,8 +60,9 @@ public class Bayespam {
 
         // Check that there are 2 subdirectories
         if (dir_listing.length != 2) {
-            System.out.println("- Error: specified directory does not contain " +
-                               "two subdirectories.\n");
+            System.out.println(
+                "- Error: specified directory does not contain " +
+                "two subdirectories.\n");
             Runtime.getRuntime().exit(0);
         }
 
@@ -264,6 +266,7 @@ public class Bayespam {
         System.out.println("Correct reject rate:\t" + crr);
         System.out.println("False   accept rate:\t" + far);
         System.out.println("False   reject rate:\t" + frr);
+        System.out.println("\n\tPredicted\nActual\tRegular\tSpam\nRegular\t" + correctRegular +"\t" + falseSpam + "\nSpam\t" + falseRegular + "\t" + correctSpam + "\n");
         System.out.println("Performance:\t" +
                            (correctRegular + correctSpam) / allMsg * 100);
 
