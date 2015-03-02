@@ -168,6 +168,16 @@ public class BigramBayespam {
         // Print out the hash table
         ///printVocab();
 
+		/// Remove bigrams that occur only a couple of times
+    	Hashtable<String, Multiple_Counter> tmp =
+        	new Hashtable<String, Multiple_Counter>();
+		for (String it : vocab.keySet()) {
+			Multiple_Counter bigram = vocab.get(it);
+			if (bigram.counter_regular + bigram.counter_spam >= 3) {
+				tmp.put(it, bigram);
+			}
+		}
+		vocab = tmp;
         // Now all students must continue from here:
         //
         // 1) A priori class probabilities must be computed from the number of
