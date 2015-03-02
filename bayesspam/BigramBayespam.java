@@ -102,7 +102,9 @@ public class BigramBayespam {
                         ret.add(prevWord + " " + word);
                     }
                     prevWord = word;
-                }
+                } else {
+					prevWord = "";
+				}
             }
         }
         return ret.toArray(new String[ret.size()]);
@@ -140,7 +142,9 @@ public class BigramBayespam {
                             addWord(prevWord + " " + word, type);
                         }
                         prevWord = word;
-                    }
+                    } else {
+						prevWord = "";
+					}
                 }
             }
 
@@ -149,7 +153,7 @@ public class BigramBayespam {
     }
 
     public static void main(String[] args) throws IOException {
-        float epsilon = 1;
+        float epsilon = 1f;
         // Location of the directory (the path) taken from the cmd line (first
         // arg)
         File dir_location = new File(args[0]);
@@ -175,7 +179,7 @@ public class BigramBayespam {
             new Hashtable<String, Multiple_Counter>();
         for (String it : vocab.keySet()) {
             Multiple_Counter bigram = vocab.get(it);
-            if (bigram.counter_regular + bigram.counter_spam >= 3) {
+            if (bigram.counter_regular + bigram.counter_spam >= 2) {
                 tmp.put(it, bigram);
             }
         }
