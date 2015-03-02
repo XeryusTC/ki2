@@ -266,7 +266,9 @@ public class Bayespam {
         System.out.println("Correct reject rate:\t" + crr);
         System.out.println("False   accept rate:\t" + far);
         System.out.println("False   reject rate:\t" + frr);
-        System.out.println("\n\tPredicted\nActual\tRegular\tSpam\nRegular\t" + correctRegular +"\t" + falseSpam + "\nSpam\t" + falseRegular + "\t" + correctSpam + "\n");
+        System.out.println("\n\tPredicted\nActual\tRegular\tSpam\nRegular\t" +
+                           correctRegular + "\t" + falseSpam + "\nSpam\t" +
+                           falseRegular + "\t" + correctSpam + "\n");
         System.out.println("Performance:\t" +
                            (correctRegular + correctSpam) / allMsg * 100);
 
