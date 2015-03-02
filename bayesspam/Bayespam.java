@@ -268,6 +268,7 @@ public class Bayespam
         System.out.println("Correct reject rate:\t"+crr);
         System.out.println("False   accept rate:\t"+far);
         System.out.println("False   reject rate:\t"+frr);
+        System.out.println("Performance:\t"+ (correctRegular+correctSpam)/allMsg*100);
 
         // 7) Errors must be computed on the test set (FAR = false accept rate (misses), FRR = false reject rate (false alarms))
         // 8) Improve the code and the performance (speed, accuracy)
