@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.*;
 
-public class Bayespam {
+public class BigramBayespam {
     // This defines the two types of messages we have.
     static enum MessageType {
         NORMAL,
@@ -89,13 +89,18 @@ public class Bayespam {
         HashSet<String> ret = new HashSet<String>();
         FileInputStream in = new FileInputStream(f);
         BufferedReader buf = new BufferedReader(new InputStreamReader(in));
-        String line;
+        String line, word, prevWord="";
 
         while ((line = buf.readLine()) != null) {
             StringTokenizer tok = new StringTokenizer(line);
             while (tok.hasMoreTokens()) {
-                ret.add(
-                    tok.nextToken().replaceAll("[^a-zA-Z]", "").toLowerCase());
+				word = tok.nextToken().replaceAll("[^a-zA-Z]", "").toLowerCase();
+				if (word.length() >= 4) {
+					if (prevWord != "") {
+		                ret.add(prevWord + " " + word);
+					}
+					prevWord = word;
+				}
             }
         }
         return ret.toArray(new String[ret.size()]);
@@ -116,7 +121,7 @@ public class Bayespam {
             FileInputStream i_s = new FileInputStream(messages[i]);
             BufferedReader in = new BufferedReader(new InputStreamReader(i_s));
             String line;
-            String word;
+            String word, prevWord="";
 
             // read a line
             while ((line = in.readLine()) != null) {
@@ -128,8 +133,12 @@ public class Bayespam {
                     word = st.nextToken();
                     word = word.replaceAll("[^a-zA-Z]", "").toLowerCase();
                     // add them to the vocabulary
-                    if (word.length() >= 4)
-                        addWord(word, type);
+                    if (word.length() >= 4) {
+						if (prevWord != "") {
+	                        addWord(prevWord + " " + word, type);
+						}
+						prevWord = word;
+					}
                 }
             }
 
@@ -157,7 +166,7 @@ public class Bayespam {
         readMessages(MessageType.SPAM);
 
         // Print out the hash table
-        /// printVocab();
+        ///printVocab();
 
         // Now all students must continue from here:
         //
