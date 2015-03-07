@@ -73,8 +73,9 @@ public class RunClustering {
     public static int chooseAlgorithm() {
         int algID = 4;
         while (true) {
-            System.out.print("Run K-means (1), Leader-Follower(2), Kohonen SOM"
-                             + "(3) or Quit(4) ? ");
+            System.out.print(
+                "Run K-means (1), Leader-Follower(2), Kohonen SOM" +
+                "(3) or Quit(4) ? ");
             String line = "";
             try {
                 if ((line = in.readLine()) == null)
@@ -276,7 +277,7 @@ public class RunClustering {
 
             br.close();
         } catch (Exception e) {
-            System.out.println("error occured while reading traindata:" + e);
+            System.out.println("error occurred while reading traindata:" + e);
             System.exit(1);
         }
     }
@@ -304,7 +305,7 @@ public class RunClustering {
             }
             br.close();
         } catch (Exception e) {
-            System.out.println("error occured while reading testdata:" + e);
+            System.out.println("error occurred while reading testdata:" + e);
             System.exit(1);
         }
     }
@@ -320,7 +321,8 @@ public class RunClustering {
 
             br.close();
         } catch (Exception e) {
-            System.out.println("error occured while reading requestsdata:" + e);
+            System.out.println("error occurred while reading requestsdata:" +
+                               e);
             System.exit(1);
         }
     }
@@ -336,7 +338,7 @@ public class RunClustering {
 
             br.close();
         } catch (Exception e) {
-            System.out.println("error occured while reading clientsdata:" + e);
+            System.out.println("error occurred while reading clientsdata:" + e);
             System.exit(1);
         }
     }
