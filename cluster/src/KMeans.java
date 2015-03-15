@@ -50,18 +50,63 @@ public class KMeans extends ClusteringAlgorithm {
 
         // Here k new cluster are initialized
         clusters = new Cluster[k];
-        for (int ic = 0; ic < k; ic++)
+        for (int ic = 0; ic < k; ic++) {
             clusters[ic] = new Cluster();
+			clusters[ic].prototype = new float[dim];
+		}
     }
 
     public boolean train() {
         // implement k-means algorithm here:
         // Step 1: Select an initial random partioning with k clusters
-        // Step 2: Generate a new partition by assigning each datapoint to its
-        // closest cluster center
-        // Step 3: recalculate cluster centers
-        // Step 4: repeat until clustermembership stabilizes
-        return false;
+		Random rand = new Random();
+		for (int i=0; i<trainData.size(); ++i) {
+			clusters[rand.nextInt(clusters.length)].currentMembers.add(i);
+		}
+
+		boolean converged = false;
+		while (!converged) {
+			/// Calculate prototype and previousMembers for each cluster
+			for (Cluster c : clusters) {
+				for (int i=0; i<dim; ++i) /// Reset cluster centres
+					c.prototype[i] = 0f;
+				Iterator it = c.currentMembers.iterator();
+				while (it.hasNext()) {
+					Integer id = (Integer)it.next();
+					for (int j=0; j<dim; ++j)
+						c.prototype[j] += trainData.get(id)[j];
+				}
+				for (int i=0; i<dim; ++i) {
+					c.prototype[i] /= (float)(c.currentMembers.size());
+				}
+				c.previousMembers.clear();
+				c.previousMembers.addAll(c.currentMembers);
+				c.currentMembers.clear();
+			}
+			/// Calculate distance to each cluster center and add datapoint to closest cluster
+			for (int i=0; i<trainData.size(); ++i) {
+				double minerr = Double.POSITIVE_INFINITY;
+				int mincluster=0;
+				for (int k=0; k<clusters.length; ++k) {
+					double err = 0f;
+					for (int j=0; j<dim; ++j)
+						err += Math.pow(trainData.get(i)[j] - clusters[k].prototype[j], 2);
+					err = Math.sqrt(err);
+					if (err < minerr) {
+						mincluster = k;
+						minerr = err;
+					}
+				}
+				clusters[mincluster].currentMembers.add(i);
+			}
+			/// Check if we converged
+			converged = true;
+			for (Cluster c : clusters) {
+				if (!c.currentMembers.equals(c.previousMembers))
+					converged = false;
+			}
+		}
+		return false;
     }
 
     public boolean test() {
