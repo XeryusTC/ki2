@@ -66,15 +66,15 @@ public class Kohonen extends ClusteringAlgorithm {
         // Step 1: initialize map with random vectors (A good place to do this,
         // is in the initialisation of the clusters)
         /// r and eta are created outside of the loop
-        float r, eta;
+        double r, eta;
         // Repeat 'epochs' times:
         for (int t = 0; t < epochs; t++) {
             /// Lets start with printing the progress
             printProgress((double)t/epochs);
             // Step 2: Calculate the squareSize and the learningRate, these decrease
             // lineary with the number of epochs.
-            eta = (float)0.8   * (1 - (float)t/epochs);
-            r   = ((float)n)/2 * (1 - (float)t/epochs);
+            eta = initialLearningRate * (1 - (float)t/epochs);
+            r   = ((float)n)/2        * (1 - (float)t/epochs);
             // Step 3: Every input vector is presented to the map (always in the
             // same order)
             // For each vector its Best Matching Unit is found, and :
@@ -110,7 +110,7 @@ public class Kohonen extends ClusteringAlgorithm {
                         float[] prot = new float[dim];
                         /// Calculate the new prototype from the given formula
                         for (int k = 0; k < dim; k++ ) {
-                            prot[k] = (1 - eta) * c.prototype[k] + eta * in[k];
+                            prot[k] = (float)((1 - eta) * c.prototype[k] + eta * in[k]);
                         }
                         /// Update the prototype in place
                         c.prototype = prot;
