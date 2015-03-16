@@ -108,9 +108,11 @@ public class Kohonen extends ClusteringAlgorithm {
                     for (int j = Math.max(0, minj - (int)r); j < jUpper; j++) {
                         Cluster c = clusters[i][j];
                         float[] prot = new float[dim];
+                        /// Calculate the new prototype from the given formula
                         for (int k = 0; k < dim; k++ ) {
                             prot[k] = (1 - eta) * c.prototype[k] + eta * in[k];
                         }
+                        /// Update the prototype in place
                         c.prototype = prot;
                     }
                 }
