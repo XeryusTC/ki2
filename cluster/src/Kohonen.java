@@ -55,6 +55,9 @@ public class Kohonen extends ClusteringAlgorithm {
             for (int i2 = 0; i2 < n; i2++) {
                 clusters[i][i2] = new Cluster();
                 clusters[i][i2].prototype = new float[dim];
+                for (int j = 0; j < dim; j++) {
+                    clusters[i][i2].prototype[j] = rnd.nextFloat();
+                }
             }
         }
     }
@@ -62,16 +65,54 @@ public class Kohonen extends ClusteringAlgorithm {
     public boolean train() {
         // Step 1: initialize map with random vectors (A good place to do this,
         // is in the initialisation of the clusters)
+        /// r and eta are created outside of the loop
+        float r, eta;
         // Repeat 'epochs' times:
-        // Step 2: Calculate the squareSize and the learningRate, these decrease
-        // lineary with the number of epochs.
-        // Step 3: Every input vector is presented to the map (always in the
-        // same order)
-        // For each vector its Best Matching Unit is found, and :
-        // Step 4: All nodes within the neighbourhood of the BMU are changed,
-        // you don't have to use distance relative learning.
-        // Since training kohonen maps can take quite a while, presenting the
-        // user with a progress bar would be nice
+        for (int t = 0; t < epochs; t++) {
+            printProgress((double)t/epochs);
+            // Step 2: Calculate the squareSize and the learningRate, these decrease
+            // lineary with the number of epochs.
+            eta = (float)0.8   * (1 - (float)t/epochs);
+            r   = ((float)n)/2 * (1 - (float)t/epochs);
+            // Step 3: Every input vector is presented to the map (always in the
+            // same order)
+            // For each vector its Best Matching Unit is found, and :
+            for (float[] in : trainData) {
+                int mini = 0, minj = 0;
+                double dist = 0, mindist = Double.POSITIVE_INFINITY;
+                for (int i = 0; i < n; i++) {
+                    for (int j = 0; j < n; j++) {
+                        for (int k = 0; k < dim; k ++ ) {
+                            dist += Math.pow(clusters[i][j].prototype[k] - in[k], 2);
+                        }
+                        if (dist < mindist) {
+                            mini = i;
+                            minj = j;
+                            mindist = dist;
+                        }
+                    }
+                }
+                for (int i = mini - (int)r; i < mini + (int)r; i++) {
+                    if (i < n && i >= 0) {
+                        for (int j = minj - (int)r; j < minj - (int)r; j++) {
+                            if (0 <= j && j < n) {
+                                Cluster c = clusters[i][j];
+                                float[] prot = new float[dim];
+                                for (int k = 0; k < dim; k++ ) {
+                                    prot[k] = (1 - eta) * c.prototype[k] + eta * in[k];
+                                }
+                                c.prototype = prot;
+                            }
+                        }
+                    }
+                }
+            }
+            // Step 4: All nodes within the neighbourhood of the BMU are changed,
+            // you don't have to use distance relative learning.
+            // Since training kohonen maps can take quite a while, presenting the
+            // user with a progress bar would be nice
+        }
+        System.out.print('\n');
         return true;
     }
 
@@ -119,5 +160,17 @@ public class Kohonen extends ClusteringAlgorithm {
 
     public void setPrefetchThreshold(double prefetchThreshold) {
         this.prefetchThreshold = prefetchThreshold;
+    }
+
+
+    public static void printProgress(double progress) {
+        final int width = 60;
+        System.out.print("\r0 [");
+        int i = 0;
+        for (; i <= (int)(progress*width);i++)
+            System.out.print('#');
+        for (; i < width; i++)
+            System.out.print(' ');
+        System.out.print("] 100");
     }
 }
