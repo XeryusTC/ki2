@@ -69,6 +69,7 @@ public class Kohonen extends ClusteringAlgorithm {
         float r, eta;
         // Repeat 'epochs' times:
         for (int t = 0; t < epochs; t++) {
+            /// Lets start with printing the progress
             printProgress((double)t/epochs);
             // Step 2: Calculate the squareSize and the learningRate, these decrease
             // lineary with the number of epochs.
@@ -78,6 +79,7 @@ public class Kohonen extends ClusteringAlgorithm {
             // same order)
             // For each vector its Best Matching Unit is found, and :
             for (float[] in : trainData) {
+                /// We remember the indices of the best matching unit
                 int mini = 0, minj = 0;
                 double dist = 0, mindist = Double.POSITIVE_INFINITY;
                 for (int i = 0; i < n; i++) {
@@ -85,6 +87,8 @@ public class Kohonen extends ClusteringAlgorithm {
                         for (int k = 0; k < dim; k ++ ) {
                             dist += Math.pow(clusters[i][j].prototype[k] - in[k], 2);
                         }
+                        /// We do not take the square of the numbers, but this doesn't matter since:
+                        ///     iff n < m then sqrt(n) < sqrt(m)
                         if (dist < mindist) {
                             mini = i;
                             minj = j;
@@ -92,25 +96,25 @@ public class Kohonen extends ClusteringAlgorithm {
                         }
                     }
                 }
-                for (int i = mini - (int)r; i < mini + (int)r; i++) {
-                    if (i < n && i >= 0) {
-                        for (int j = minj - (int)r; j < minj - (int)r; j++) {
-                            if (0 <= j && j < n) {
-                                Cluster c = clusters[i][j];
-                                float[] prot = new float[dim];
-                                for (int k = 0; k < dim; k++ ) {
-                                    prot[k] = (1 - eta) * c.prototype[k] + eta * in[k];
-                                }
-                                c.prototype = prot;
-                            }
+                // Step 4: All nodes within the neighbourhood of the BMU are changed,
+                // you don't have to use distance relative learning.
+                // Since training kohonen maps can take quite a while, presenting the
+                // user with a progress bar would be nice
+                /// Lets clamp the upper and lower bound so we don't train
+                /// outside of the network.
+                int iUpper = Math.min(n, mini + (int)r);
+                for (int i = Math.max(0, mini - (int)r); i < iUpper; i++) {
+                    int jUpper =  Math.min(n, minj - (int)r);
+                    for (int j = Math.max(0, minj - (int)r); j < jUpper; j++) {
+                        Cluster c = clusters[i][j];
+                        float[] prot = new float[dim];
+                        for (int k = 0; k < dim; k++ ) {
+                            prot[k] = (1 - eta) * c.prototype[k] + eta * in[k];
                         }
+                        c.prototype = prot;
                     }
                 }
             }
-            // Step 4: All nodes within the neighbourhood of the BMU are changed,
-            // you don't have to use distance relative learning.
-            // Since training kohonen maps can take quite a while, presenting the
-            // user with a progress bar would be nice
         }
         System.out.print('\n');
         return true;
