@@ -130,14 +130,29 @@ public class Kohonen extends ClusteringAlgorithm {
 
     public boolean test() {
         // iterate along all clients
+        int hits = 0, requests = 0;
         // for each client find the cluster of which it is a member
-        // get the actual testData (the vector) of this client
-        // iterate along all dimensions
-        // and count prefetched htmls
-        // count number of hits
-        // count number of requests
-        // set the global variables hitrate and accuracy to their appropriate
-        // value
+        for (int client = 0; client < trainData.size(); client++) {
+            Cluster owner = null;
+            for (int i=0; i < n; i++)
+                for (int j=0; j < n; j++)
+                    if (clusters[i][j].currentMembers.contains(client))
+                        owner = clusters[i][j];
+            // get the actual testData (the vector) of this client
+            float[] test = testData.get(client);
+            // iterate along all dimensions
+            // and count prefetched htmls
+            for (int i = 0; i < dim; i++) {
+                if (owner.prototype[i] > prefetchThreshold)
+                    requests++;
+                if (owner.prototype[i] > prefetchThreshold == test[i] > prefetchThreshold)
+                    hits++;
+            }
+            // count number of hits
+            // count number of requests
+            // set the global variables hitrate and accuracy to their appropriate
+            // value
+        }
         return true;
     }
 
