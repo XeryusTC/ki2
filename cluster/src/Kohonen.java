@@ -75,20 +75,24 @@ public class Kohonen extends ClusteringAlgorithm {
             // lineary with the number of epochs.
             eta = initialLearningRate * (1 - (float)t/epochs);
             r   = ((float)n)/2        * (1 - (float)t/epochs);
+            /// Clear all the current members of each cluster
+            for (int i = 0; i < n; i++ )
+                for (int j = 0; j < n; j++)
+                    clusters[i][j].currentMembers.clear();
             // Step 3: Every input vector is presented to the map (always in the
             // same order)
             // For each vector its Best Matching Unit is found, and :
-            for (float[] in : trainData) {
+            for (int in =0; in < trainData.size(); in++) {
                 /// We remember the indices of the best matching unit
                 int mini = 0, minj = 0;
                 double dist = 0, mindist = Double.POSITIVE_INFINITY;
                 for (int i = 0; i < n; i++) {
                     for (int j = 0; j < n; j++) {
                         for (int k = 0; k < dim; k ++ ) {
-                            dist += Math.pow(clusters[i][j].prototype[k] - in[k], 2);
+                            dist += Math.pow(clusters[i][j].prototype[k]
+                                    - trainData.get(in)[k], 2);
                         }
-                        /// We do not take the square of the numbers, but this doesn't matter since:
-                        ///     iff n < m then sqrt(n) < sqrt(m)
+                        dist = Math.sqrt(dist);
                         if (dist < mindist) {
                             mini = i;
                             minj = j;
@@ -101,21 +105,23 @@ public class Kohonen extends ClusteringAlgorithm {
                 // Since training kohonen maps can take quite a while, presenting the
                 // user with a progress bar would be nice
                 /// Lets clamp the upper and lower bound so we don't train
-                /// outside of the network.
-                int iUpper = Math.min(n, mini + (int)r);
-                for (int i = Math.max(0, mini - (int)r); i < iUpper; i++) {
+                /// outside of the network
+                int iUpper = Math.min(n-1, mini + (int)r);
+                for (int i = Math.max(0, mini - (int)r); i <= iUpper; i++) {
                     int jUpper =  Math.min(n, minj - (int)r);
-                    for (int j = Math.max(0, minj - (int)r); j < jUpper; j++) {
+                    for (int j = Math.max(0, minj - (int)r); j <= jUpper; j++) {
                         Cluster c = clusters[i][j];
                         float[] prot = new float[dim];
                         /// Calculate the new prototype from the given formula
                         for (int k = 0; k < dim; k++ ) {
-                            prot[k] = (float)((1 - eta) * c.prototype[k] + eta * in[k]);
+                            prot[k] = (float)((1 - eta) * c.prototype[k]
+                                    + eta * trainData.get(in)[k]);
                         }
                         /// Update the prototype in place
                         c.prototype = prot;
                     }
                 }
+                clusters[mini][minj].currentMembers.add(in);
             }
         }
         System.out.print('\n');
