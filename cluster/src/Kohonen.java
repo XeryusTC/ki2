@@ -130,7 +130,7 @@ public class Kohonen extends ClusteringAlgorithm {
 
     public boolean test() {
         // iterate along all clients
-        int hits = 0, requests = 0;
+        int hits = 0, requests = 0, prefetch = 0;
         // for each client find the cluster of which it is a member
         for (int client = 0; client < trainData.size(); client++) {
             Cluster owner = null;
@@ -143,16 +143,20 @@ public class Kohonen extends ClusteringAlgorithm {
             // iterate along all dimensions
             // and count prefetched htmls
             for (int i = 0; i < dim; i++) {
-                if (owner.prototype[i] > prefetchThreshold)
-                    requests++;
-                if (owner.prototype[i] > prefetchThreshold == test[i] > prefetchThreshold)
+                if (owner.prototype[i] > prefetchThreshold && test[i] > prefetchThreshold)
                     hits++;
+                if (test[i] > prefetchThreshold)
+                    requests++;
+                if (owner.prototype[i] > prefetchThreshold)
+                    prefetch++;
             }
             // count number of hits
             // count number of requests
             // set the global variables hitrate and accuracy to their appropriate
             // value
         }
+        hitrate  = (float)hits/prefetch;
+        accuracy = (float)hits/requests;
         return true;
     }
 
