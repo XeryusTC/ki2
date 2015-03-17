@@ -120,6 +120,27 @@ public class KMeans extends ClusteringAlgorithm {
         // count number of requests
         // set the global variables hitrate and accuracy to their appropriate
         // value
+		/// Iterate over all the clusters
+		int hits=0, requests=0, prefetch=0;
+		for (Cluster c : clusters) {
+			/// Iterate over the members of the clusters and count their hitrate etc
+			Iterator it = c.currentMembers.iterator();
+			while (it.hasNext()) {
+				Integer id = (Integer)it.next(); // Select the right client
+				for (int i=0; i<dim; ++i) {
+					if (c.prototype[i] > prefetchThreshold &&
+							testData.get(id)[i] > prefetchThreshold)
+						++hits;
+					if (testData.get(id)[i] > prefetchThreshold)
+						++requests;
+					if (c.prototype[i] > prefetchThreshold)
+						prefetch++;
+				}
+			}
+		}
+		hitrate  = hits/(float)prefetch;
+		accuracy = hits/(float)requests;
+
         return true;
     }
 
