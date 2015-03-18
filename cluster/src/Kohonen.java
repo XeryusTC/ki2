@@ -54,10 +54,7 @@ public class Kohonen extends ClusteringAlgorithm {
         for (int i = 0; i < n; i++) {
             for (int i2 = 0; i2 < n; i2++) {
                 clusters[i][i2] = new Cluster();
-                clusters[i][i2].prototype = new float[dim];
-                for (int j = 0; j < dim; j++) {
-                    clusters[i][i2].prototype[j] = rnd.nextFloat();
-                }
+                clusters[i][i2].prototype = trainData.elementAt(rnd.nextInt(trainData.size()));
             }
         }
     }
@@ -70,11 +67,11 @@ public class Kohonen extends ClusteringAlgorithm {
         // Repeat 'epochs' times:
         for (int t = 0; t < epochs; t++) {
             /// Lets start with printing the progress
-            printProgress((double)t/epochs);
+            printProgress(t/(double)epochs);
             // Step 2: Calculate the squareSize and the learningRate, these decrease
             // lineary with the number of epochs.
-            eta = initialLearningRate * (1 - (float)t/epochs);
-            r   = ((float)n)/2        * (1 - (float)t/epochs);
+            eta = initialLearningRate * (1 - t/(float)epochs);
+            r   = n/(float)2          * (1 - t/(float)epochs);
             /// Clear all the current members of each cluster
             for (int i = 0; i < n; i++ )
                 for (int j = 0; j < n; j++)
@@ -93,7 +90,7 @@ public class Kohonen extends ClusteringAlgorithm {
                                     - trainData.get(in)[k], 2);
                         }
                         dist = Math.sqrt(dist);
-                        if (dist < mindist) {
+                        if (dist <= mindist) {
                             mini = i;
                             minj = j;
                             mindist = dist;
@@ -106,9 +103,9 @@ public class Kohonen extends ClusteringAlgorithm {
                 // user with a progress bar would be nice
                 /// Lets clamp the upper and lower bound so we don't train
                 /// outside of the network
-                int iUpper = Math.min(n-1, mini + (int)r);
+                int iUpper = Math.min(n - 1, mini + (int)r);
                 for (int i = Math.max(0, mini - (int)r); i <= iUpper; i++) {
-                    int jUpper =  Math.min(n, minj - (int)r);
+                    int jUpper =  Math.min(n - 1, minj + (int)r);
                     for (int j = Math.max(0, minj - (int)r); j <= jUpper; j++) {
                         Cluster c = clusters[i][j];
                         float[] prot = new float[dim];
@@ -118,7 +115,7 @@ public class Kohonen extends ClusteringAlgorithm {
                                     + eta * trainData.get(in)[k]);
                         }
                         /// Update the prototype in place
-                        c.prototype = prot;
+                        clusters[i][j].prototype = prot;
                     }
                 }
                 clusters[mini][minj].currentMembers.add(in);
@@ -155,17 +152,17 @@ public class Kohonen extends ClusteringAlgorithm {
             // set the global variables hitrate and accuracy to their appropriate
             // value
         }
-        hitrate  = (float)hits/prefetch;
-        accuracy = (float)hits/requests;
+        hitrate  = hits/(float)prefetch;
+        accuracy = hits/(float)requests;
         return true;
     }
 
     public void showTest() {
-        System.out.println("Initial learning Rate=" + initialLearningRate);
-        System.out.println("Prefetch threshold=" + prefetchThreshold);
-        System.out.println("Hitrate: " + hitrate);
-        System.out.println("Accuracy: " + accuracy);
-        System.out.println("Hitrate+Accuracy=" + (hitrate + accuracy));
+        System.out.println("Initial learning Rate = " + initialLearningRate);
+        System.out.println("Prefetch threshold = " + prefetchThreshold);
+        System.out.println("Hitrate = " + hitrate);
+        System.out.println("Accuracy = " + accuracy);
+        System.out.println("Hitrate+Accuracy = " + (hitrate + accuracy));
     }
 
     public void showMembers() {

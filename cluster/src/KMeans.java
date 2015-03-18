@@ -147,10 +147,10 @@ public class KMeans extends ClusteringAlgorithm {
     // The following members are called by RunClustering, in order to present
     // information to the user
     public void showTest() {
-        System.out.println("Prefetch threshold=" + this.prefetchThreshold);
-        System.out.println("Hitrate: " + this.hitrate);
-        System.out.println("Accuracy: " + this.accuracy);
-        System.out.println("Hitrate+Accuracy=" +
+        System.out.println("Prefetch threshold = " + this.prefetchThreshold);
+        System.out.println("Hitrate = " + this.hitrate);
+        System.out.println("Accuracy = " + this.accuracy);
+        System.out.println("Hitrate+Accuracy = " +
                            (this.hitrate + this.accuracy));
     }
 
