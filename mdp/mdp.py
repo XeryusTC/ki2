@@ -42,13 +42,25 @@ class Map :
 
     ### you write this method
     def valueIteration(self) :
+        epsilon = 0.01
         ### 1. initialize utilities to 0
+        for state in self.states.values():
+            if not state.isGoal:
+                state.utility = 0.0
         ### 2. repeat value iteration loop until largest change is smaller than
         ###    stop criterion
-        
-        pass #placeholder, delete when implementing
-        
-        
+        while True:
+            maxdiff = 0
+            for s in self.states.values():
+                if not s.isGoal:
+                    oldU = s.utility
+                    s.utility = s.reward + self.gamma * \
+                            max([s.computeEU(a) for a in s.actions])
+                    if maxdiff < abs(oldU - s.utility):
+                        maxdiff = abs(oldU - s.utility)
+            if maxdiff < epsilon:
+                break
+
 
     ### you write this method
     def policyIteration(self) :

@@ -97,7 +97,7 @@ public class BigramBayespam {
             while (tok.hasMoreTokens()) {
                 word =
                     tok.nextToken().replaceAll("[^a-zA-Z]", "").toLowerCase();
-                if (word.length() >= 4) {
+                if (word.length() >= 9) {
                     if (prevWord != "") {
                         ret.add(prevWord + " " + word);
                     }
@@ -137,7 +137,7 @@ public class BigramBayespam {
                     word = st.nextToken();
                     word = word.replaceAll("[^a-zA-Z]", "").toLowerCase();
                     // add them to the vocabulary
-                    if (word.length() >= 4) {
+                    if (word.length() >= 9) {
                         if (prevWord != "") {
                             addWord(prevWord + " " + word, type);
                         }
