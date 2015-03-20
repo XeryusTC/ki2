@@ -42,7 +42,7 @@ class Map :
 
     ### you write this method
     def valueIteration(self) :
-        epsilon = 0.01
+        epsilon = 0.0001
         ### 1. initialize utilities to 0
         for state in self.states.values():
             if not state.isGoal:
