@@ -138,8 +138,8 @@ public class KMeans extends ClusteringAlgorithm {
 				}
 			}
 		}
-		hitrate  = hits/(float)prefetch;
-		accuracy = hits/(float)requests;
+		accuracy = hits/(float)prefetch;
+		hitrate  = hits/(float)requests;
 
         return true;
     }

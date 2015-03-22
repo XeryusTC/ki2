@@ -152,8 +152,8 @@ public class Kohonen extends ClusteringAlgorithm {
             // set the global variables hitrate and accuracy to their appropriate
             // value
         }
-        hitrate  = hits/(float)prefetch;
-        accuracy = hits/(float)requests;
+        accuracy = hits/(float)prefetch;
+        hitrate = hits/(float)requests;
         return true;
     }
 
