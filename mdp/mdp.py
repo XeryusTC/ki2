@@ -35,6 +35,7 @@ class Map :
         self.gamma = 0.8
         self.n_rows = 0
         self.n_cols = 0
+        self.iterations = 0
     
     class PrintType :
         ACTIONS = 0
@@ -50,6 +51,7 @@ class Map :
         ### 2. repeat value iteration loop until largest change is smaller than
         ###    stop criterion
         while True:
+            self.iterations += 1
             maxdiff = 0
             for s in self.states.values():
                 if not s.isGoal:
@@ -65,10 +67,22 @@ class Map :
     ### you write this method
     def policyIteration(self) :
         ### 1. initialize random policy
+        for s in self.states.values():
+            if not s.isGoal:
+                s.policy = s.actions[random.randint(0, len(s.actions) - 1)]
         ### 2 repeat policy iteration loop until policy is stable
-    
-        pass #placeholder, delete when implementing
-    
+        changed = True
+        while changed:
+            self.iterations += 1
+            self.calculateUtilitiesLinear()
+            changed = False
+            for s in self.states.values():
+                if not s.isGoal:
+                    newP = s.selectBestAction()
+                    if newP != s.policy:
+                        changed = True
+                    s.policy = newP
+ 
     def calculateUtilitiesLinear(self) :
         n_states = len(self.states)
         coeffs = numpy.zeros((n_states, n_states))
@@ -86,13 +100,13 @@ class Map :
         for s in self.states.values() :
             if not s.isGoal :
                 s.utility = solution[s.id, 0]
-    
+
     def printActions(self) :
         self.printMaze(self.PrintType.ACTIONS)
 
     def printValues(self) :
         self.printMaze(self.PrintType.VALUES)
-    
+
     def printMaze(self, print_type) :
         to_print = ":"
         for c in range(self.n_cols) :
