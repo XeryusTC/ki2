@@ -82,7 +82,7 @@ class Map :
                     if newP != s.policy:
                         changed = True
                     s.policy = newP
- 
+
     def calculateUtilitiesLinear(self) :
         n_states = len(self.states)
         coeffs = numpy.zeros((n_states, n_states))
